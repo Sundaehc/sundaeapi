@@ -1,0 +1,8 @@
+server:
+  port: 8121
+  servlet:
+    context-path: /api
+sundaeapi:
+  client:
+    access-key: sundae
+    secret-key: abcdefgh
