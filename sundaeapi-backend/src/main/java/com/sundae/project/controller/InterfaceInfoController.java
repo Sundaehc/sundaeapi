@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -109,7 +111,7 @@ public class InterfaceInfoController {
      */
     @PostMapping("/update")
     public BaseResponse<Boolean> updateInterfaceInfo(@RequestBody InterfaceInfoUpdateRequest interfaceInfoUpdateRequest,
-                                            HttpServletRequest request) {
+                                                     HttpServletRequest request) {
         if (interfaceInfoUpdateRequest == null || interfaceInfoUpdateRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -243,7 +245,7 @@ public class InterfaceInfoController {
     @PostMapping("/offline")
     @AuthCheck(mustRole = "admin")
     public BaseResponse<Boolean> offlineInterfaceInfo(@RequestBody IdRequest idRequest,
-                                                     HttpServletRequest request) {
+                                                      HttpServletRequest request) {
         if (idRequest == null || idRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -270,7 +272,7 @@ public class InterfaceInfoController {
      */
     @PostMapping("/invoke")
     public BaseResponse<Object> invokeInterfaceInfo(@RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequest,
-                                                      HttpServletRequest request) {
+                                                    HttpServletRequest request) {
         if (interfaceInfoInvokeRequest == null || interfaceInfoInvokeRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -285,15 +287,56 @@ public class InterfaceInfoController {
         if (interfaceInfo.getStatus() == InterfaceInfoStatusEnum.OFFLINE.getValue()) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口未开放");
         }
+        String interfaceInfoName = interfaceInfo.getName();
         User loginUser = userService.getLoginUser(request);
         String accessKey = loginUser.getAccessKey();
         String secretKey = loginUser.getSecretKey();
-        SundaeApiClient tempClient = new SundaeApiClient(accessKey, secretKey);
-        Gson gson = new Gson();
-        com.sundae.sundaeclientsdk.model.User user = gson.fromJson(userRequestParams, com.sundae.sundaeclientsdk.model.User.class);
-        String userNameByPost = tempClient.getUserNameByPost(user);
-        return ResultUtils.success(userNameByPost);
+//        SundaeApiClient tempClient = new SundaeApiClient(accessKey, secretKey);
+//        Gson gson = new Gson();
+//        com.sundae.sundaeclientsdk.model.User user = gson.fromJson(userRequestParams, com.sundae.sundaeclientsdk.model.User.class);
+//        String userNameByPost = tempClient.getUserNameByPost(user);
+//
+        Object result = reflectionInterface(SundaeApiClient.class, interfaceInfoName, userRequestParams, accessKey, secretKey);
+        //网关拦截对异常处理
+        if (result.equals(GateWayErrorCode.FORBIDDEN.getCode())) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_ERROR, "调用次数已用尽");
+        }
+        return ResultUtils.success(result);
     }
-    // endregion
 
+    public Object reflectionInterface(Class<?> reflectionClass, String methodName, String parameter, String accessKey, String secretKey) {
+        //构造反射类的实例
+        Object result = null;
+        try {
+            Constructor<?> constructor = reflectionClass.getDeclaredConstructor(String.class, String.class);
+            //获取SDK的实例，同时传入密钥
+            SundaeApiClient sunApiClient = (SundaeApiClient) constructor.newInstance(accessKey, secretKey);
+            //获取SDK中所有的方法
+            Method[] methods = sunApiClient.getClass().getMethods();
+            //筛选出调用方法
+            for (Method method : methods
+            ) {
+                if (method.getName().equals(methodName)) {
+                    //获取方法参数类型
+                    Class<?>[] parameterTypes = method.getParameterTypes();
+                    Method method1;
+                    if (parameterTypes.length == 0) {
+                        method1 = sunApiClient.getClass().getMethod(methodName);
+                        return method1.invoke(sunApiClient);
+                    }
+                    method1 = sunApiClient.getClass().getMethod(methodName, parameterTypes[0]);
+                    //getMethod，多参会考虑重载情况获取方法,前端传来参数是JSON格式转换为String类型
+                    //参数Josn化
+                    Gson gson = new Gson();
+                    Object args = gson.fromJson(parameter, parameterTypes[0]);
+                    return result = method1.invoke(sunApiClient, args);
+                }
+            }
+        } catch (Exception e) {
+            log.error("反射调用参数错误", e);
+        }
+        return result;
+    }
 }
+// endregion
+

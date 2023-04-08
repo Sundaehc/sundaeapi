@@ -20,7 +20,7 @@ import static com.sundae.sundaeclientsdk.utils.SignUtils.getSign;
  */
 public class SundaeApiClient {
 
-    public static final String GATEWAY_HOST = "http://localhost:8125";
+    public static final String GATEWAY_HOST = "http://localhost:8090";
     private String accessKey;
 
     private String secretKey;
@@ -69,4 +69,31 @@ public class SundaeApiClient {
         System.out.println(result);
         return result;
     };
+
+    public String getdyGirl() {
+        HttpResponse httpResponse = HttpRequest.get(GATEWAY_HOST + "/api/name/dygirl")
+                .addHeaders(getHeaderMap(""))
+                .body("")
+                .execute();
+        String result = httpResponse.body();
+        return result;
+    }
+
+    public String getComfortWords() {
+        HttpResponse httpResponse = HttpRequest.get(GATEWAY_HOST + "/api/name/comfort/words")
+                    .addHeaders(getHeaderMap(""))
+                .body("")
+                .execute();
+        String result = httpResponse.body();
+        return result;
+    }
+
+    public String getHotComment() {
+        HttpResponse httpResponse = HttpRequest.get(GATEWAY_HOST + "/api/name/hot/comment")
+                .addHeaders(getHeaderMap(""))
+                .body("")
+                .execute();
+        String result = httpResponse.body();
+        return result;
+    }
 }

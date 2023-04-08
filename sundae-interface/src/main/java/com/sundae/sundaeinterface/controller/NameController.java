@@ -1,10 +1,14 @@
 package com.sundae.sundaeinterface.controller;
 
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import com.sundae.sundaeclientsdk.model.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/name")
@@ -45,4 +49,37 @@ public class NameController {
         String result = "POST 用户名是:" + user.getUsername();
         return result;
     }
+
+    @GetMapping("/dygirl")
+    public String getdyGirl(){
+        Map<String,String> map= new HashMap<>();
+        map.put("user-agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.44");
+        HttpResponse httpResponse = HttpRequest.get("https://zj.v.api.aa1.cn/api/video_dyv2")
+                .addHeaders(map)
+                .execute();
+        String location = httpResponse.header("Location");
+        HttpResponse httpResponse1 = HttpRequest.get(location).execute();
+        return httpResponse1.body();
+    }
+
+    @GetMapping("/comfort/words")
+    public String getComfortWords() {
+        Map<String,String> map= new HashMap<>();
+        map.put("user-agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.44");
+        HttpResponse httpResponse = HttpRequest.get("https://v.api.aa1.cn/api/api-wenan-anwei/index.php?type=json")
+                .addHeaders(map)
+                .execute();
+        return httpResponse.body();
+    }
+
+    @GetMapping("/hot/comment")
+    public String getHotComment() {
+        Map<String,String> map= new HashMap<>();
+        map.put("user-agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.44");
+        HttpResponse httpResponse = HttpRequest.get("https://v.api.aa1.cn/api/api-wenan-wangyiyunreping/index.php?aa1=json")
+                .addHeaders(map)
+                .execute();
+        return httpResponse.body();
+    }
+
 }

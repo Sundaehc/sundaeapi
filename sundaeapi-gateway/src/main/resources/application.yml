@@ -1,5 +1,5 @@
 server:
-  port: 8125
+  port: 8090
 spring:
   cloud:
     gateway:
@@ -18,7 +18,7 @@ logging:
           gateway: trace
 dubbo:
   application:
-    name: dubbo-springboot-demo-comsumer
+    name: dubbo-springboot-demo-provider
   protocol:
     name: dubbo
     port: -1

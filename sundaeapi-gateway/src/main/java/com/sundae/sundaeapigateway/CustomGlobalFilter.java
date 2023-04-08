@@ -46,7 +46,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
 
     private static final List<String> IP_WHITE_LIST = Arrays.asList("127.0.0.1");
 
-    public static final String INTERFACE_PATH = "http://localhost:8125";
+    public static final String INTERFACE_PATH = "http://localhost:8121";
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         // 获取请求日志
@@ -61,10 +61,10 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         log.info("请求来源地址:" + sourceAddress);
         ServerHttpResponse response = exchange.getResponse();
         // 黑白名单
-        if (!IP_WHITE_LIST.contains(sourceAddress)) {
-            response.setStatusCode(HttpStatus.FORBIDDEN);
-            return response.setComplete();
-        }
+//        if (!IP_WHITE_LIST.contains(sourceAddress)) {
+//            response.setStatusCode(HttpStatus.FORBIDDEN);
+//            return response.setComplete();
+//        }
         HttpHeaders headers = request.getHeaders();
         // 用户鉴权
         String accessKey = headers.getFirst("accessKey");
