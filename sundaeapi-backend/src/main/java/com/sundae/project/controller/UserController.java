@@ -1,6 +1,7 @@
 package com.sundae.project.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
 import com.sundae.project.exception.BusinessException;
@@ -14,10 +15,12 @@ import com.sundae.sundaeapicommon.model.entity.User;
 import com.sundae.sundaeapicommon.model.vo.UserVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,17 +45,20 @@ public class UserController {
      * @return
      */
     @PostMapping("/register")
-    public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
+    public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest, HttpServletRequest request) {
         if (userRegisterRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         String userAccount = userRegisterRequest.getUserAccount();
         String userPassword = userRegisterRequest.getUserPassword();
         String checkPassword = userRegisterRequest.getCheckPassword();
-        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
+        String mobile = userRegisterRequest.getMobile();
+        String code = userRegisterRequest.getCode();
+        String captcha = userRegisterRequest.getCaptcha();
+        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword, mobile, code, captcha)) {
             return null;
         }
-        long result = userService.userRegister(userAccount, userPassword, checkPassword);
+        long result = userService.userRegister(userRegisterRequest, request);
         return ResultUtils.success(result);
     }
 
@@ -237,6 +243,7 @@ public class UserController {
 
     /**
      * 用户申请更换签名
+     *
      * @param request
      * @return
      */
@@ -246,5 +253,48 @@ public class UserController {
         boolean result = userService.replaceSign(loginUser);
         return ResultUtils.success(result);
     }
+
+    /**
+     * 获取验证码
+     * @param request
+     * @param response
+     */
+    @GetMapping("/getCaptcha")
+    public void getCaptcha(HttpServletRequest request, HttpServletResponse response) {
+        userService.getCaptcha(request, response);
+    }
+
+    /**
+     * 发送手机短信验证码
+     * @param mobile
+     * @return
+     */
+    @GetMapping("/mobile/captcha")
+    public BaseResponse sendMobileCaptcha(@RequestParam String mobile) {
+        return userService.mobileCaptcha(mobile);
+    }
+
+    /**
+     * 验证用户输入账号是否存在（忘记密码）
+     */
+    @GetMapping("/verify/username")
+    public BaseResponse<Long> verifyUserAccount(String username) {
+        if (username == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        Long userId = userService.verifyUserAccount(username);
+        return ResultUtils.success(userId);
+    }
+
+    @PostMapping("/update/password")
+    public BaseResponse updateUserPwd(@RequestBody UserPwdUpdateRequest userPwdUpdateRequest) {
+        if (userPwdUpdateRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        String password = userPwdUpdateRequest.getPassword();
+        String checkPassword = userPwdUpdateRequest.getCheckPassword();
+        return userService.updateUserPWd(password, checkPassword);
+    }
     // endregion
+
 }

@@ -12,6 +12,7 @@
         <result property="gender" column="gender" jdbcType="TINYINT"/>
         <result property="userRole" column="userRole" jdbcType="VARCHAR"/>
         <result property="userPassword" column="userPassword" jdbcType="VARCHAR"/>
+        <result property="mobile" column="mobile" jdbcType="VARCHAR"/>
         <result property="accessKey" column="accessKey" jdbcType="VARCHAR"/>
         <result property="secretKey" column="secretKey" jdbcType="VARCHAR"/>
         <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
@@ -22,7 +23,10 @@
     <sql id="Base_Column_List">
         id,userName,userAccount,
         userAvatar,gender,userRole,
-        userPassword,accesskey,secretKey,createTime,updateTime,
+        userPassword,mobile,accesskey,secretKey,createTime,updateTime,
         isDelete
     </sql>
+    <select id="selectPhone" resultType="java.lang.String">
+        select mobile from `user` where mobile = #{mobile} and isDelete = 0;
+    </select>
 </mapper>
