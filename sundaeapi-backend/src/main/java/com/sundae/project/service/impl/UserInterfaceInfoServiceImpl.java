@@ -6,9 +6,12 @@ import com.sundae.project.common.ErrorCode;
 import com.sundae.project.exception.BusinessException;
 import com.sundae.project.service.UserInterfaceInfoService;
 import com.sundae.project.mapper.UserInterfaceInfoMapper;
+import com.sundae.sundaeapicommon.model.entity.User;
 import com.sundae.sundaeapicommon.model.entity.UserInterfaceInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 /**
 * @author Uzi
@@ -19,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoMapper, UserInterfaceInfo>
     implements UserInterfaceInfoService{
 
+    @Resource
+    private UserInterfaceInfoMapper userInterfaceInfoMapper;
     @Override
     public void validUserInterfaceInfo(UserInterfaceInfo userInterfaceInfo, boolean add) {
         if (userInterfaceInfo == null) {
@@ -48,6 +53,7 @@ public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoM
             updateWrapper.gt("leftNum", 0);
             return this.update(updateWrapper);
     }
+
 }
 
 

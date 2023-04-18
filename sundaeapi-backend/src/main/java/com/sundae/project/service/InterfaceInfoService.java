@@ -1,7 +1,9 @@
 package com.sundae.project.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.sundae.project.model.vo.InterfaceInfoVo;
 import com.sundae.sundaeapicommon.model.entity.InterfaceInfo;
+import com.sundae.sundaeapicommon.model.entity.User;
 
 /**
 * @author Uzi
@@ -17,4 +19,11 @@ public interface InterfaceInfoService extends IService<InterfaceInfo> {
      * @param add 是否为创建校验
      */
     void validInterfaceInfo(InterfaceInfo interfaceInfo, boolean add);
+
+    /**
+     * 根据id获取接口详情及剩余调用次数
+     * @param id
+     * @return
+     */
+    InterfaceInfoVo getInterfaceInfoById(long id, User loginUser);
 }

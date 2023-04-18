@@ -52,6 +52,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Resource
     private RabbitUtils rabbitUtils;
 
+    @Resource
+    private MobileSignature mobileSignature;
+
     /**
      * 盐值，混淆密码
      */
@@ -61,6 +64,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     private static final String UPDATE_PWD_ACCOUNT = "update_pwd_account";
 
+    private static final String MOBILE_SIGNATURE = "user:mobile:signature";
 
     @Override
     public long userRegister(UserRegisterRequest userRegisterRequest, HttpServletRequest request) {

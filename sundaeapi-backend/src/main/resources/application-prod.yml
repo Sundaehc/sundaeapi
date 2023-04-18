@@ -3,4 +3,13 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/sundae_api
     username: sundae_api
-    password: i2C8TsymnpZaSs3z
+    password: GtkGBnsPPpFHayZx
+dubbo:
+  application:
+    name: dubbo-springboot-demo-provider
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    id: nacos-registry
+    address: nacos://服务器内网地址:8848

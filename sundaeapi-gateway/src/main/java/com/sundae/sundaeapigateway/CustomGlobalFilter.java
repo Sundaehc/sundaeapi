@@ -79,9 +79,11 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
             log.error("getInvokeUser error");
         }
         if (invokeUser == null) {
+            log.info("调用用户:", invokeUser);
             return handleNoAuth(response);
         }
         if (Long.parseLong(nonce) > 10000L) {
+            log.info("noce:", nonce);
             return handleNoAuth(response);
         }
         // 时间戳和当前时间不能超过5分钟

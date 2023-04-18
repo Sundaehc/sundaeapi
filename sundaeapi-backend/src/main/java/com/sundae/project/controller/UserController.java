@@ -275,7 +275,7 @@ public class UserController {
     }
 
     /**
-     * 验证用户输入账号是否存在（忘记密码）
+     * 验证用户输入账号是否存在（忘记密码）并返回手机号
      */
     @GetMapping("/verify/username")
     public BaseResponse<Long> verifyUserAccount(String username) {

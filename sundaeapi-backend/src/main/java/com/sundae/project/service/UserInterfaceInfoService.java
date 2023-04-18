@@ -1,6 +1,7 @@
 package com.sundae.project.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.sundae.sundaeapicommon.model.entity.User;
 import com.sundae.sundaeapicommon.model.entity.UserInterfaceInfo;
 
 /**
@@ -19,4 +20,5 @@ public interface UserInterfaceInfoService extends IService<UserInterfaceInfo> {
      * @return
      */
     boolean invokeCount(long interfaceInfoId, long userId);
+
 }

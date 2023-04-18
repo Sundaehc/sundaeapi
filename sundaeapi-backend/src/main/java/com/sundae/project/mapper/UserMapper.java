@@ -9,6 +9,8 @@ import com.sundae.sundaeapicommon.model.entity.User;
 public interface UserMapper extends BaseMapper<User> {
 
     String selectPhone(String mobile);
+
+    String getMobile(String username);
 }
 
 

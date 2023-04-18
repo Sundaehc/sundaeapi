@@ -26,4 +26,7 @@
         select interfaceInfoId, sum(totalNum) as totalNum from user_interface_info group by interfaceInfoId
         order by totalNum desc limit #{limit};
     </select>
+    <select id="getLeftInvokeNum" resultType="java.lang.Integer">
+        select leftNum from user_interface_info where userId = #{userId} and interfaceInfoId = #{interfaceInfoId}
+    </select>
 </mapper>

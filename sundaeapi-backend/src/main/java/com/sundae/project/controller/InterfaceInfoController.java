@@ -12,6 +12,7 @@ import com.sundae.project.model.dto.interfaceinfo.InterfaceInfoInvokeRequest;
 import com.sundae.project.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.sundae.project.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
 
+import com.sundae.project.model.vo.InterfaceInfoVo;
 import com.sundae.project.service.InterfaceInfoService;
 import com.sundae.project.service.UserService;
 import com.sundae.sundaeapicommon.model.entity.InterfaceInfo;
@@ -141,12 +142,19 @@ public class InterfaceInfoController {
      * @return
      */
     @GetMapping("/get")
-    public BaseResponse<InterfaceInfo> getInterfaceInfoById(long id) {
+    public BaseResponse<InterfaceInfoVo> getInterfaceInfoById(long id, HttpServletRequest request) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        InterfaceInfo interfaceInfo = interfaceInfoService.getById(id);
-        return ResultUtils.success(interfaceInfo);
+        User loginUser = userService.getLoginUser(request);
+        InterfaceInfoVo interfaceInfoVo = interfaceInfoService.getInterfaceInfoById(id, loginUser);
+        return ResultUtils.success(interfaceInfoVo);
+//        if (id <= 0) {
+//            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+//        }
+//        InterfaceInfo interfaceInfo = interfaceInfoService.getById(id);
+//        return ResultUtils.success(interfaceInfo);
+
     }
 
     /**

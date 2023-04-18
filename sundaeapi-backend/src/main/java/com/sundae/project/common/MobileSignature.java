@@ -4,10 +4,12 @@ import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.AES;
 import org.apache.commons.codec.binary.Hex;
+import org.springframework.stereotype.Component;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+@Component
 public class MobileSignature {
 
     public static final byte[] key = "SundaeKey-cz".getBytes();

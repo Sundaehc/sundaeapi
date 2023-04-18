@@ -29,4 +29,7 @@
     <select id="selectPhone" resultType="java.lang.String">
         select mobile from `user` where mobile = #{mobile} and isDelete = 0;
     </select>
+    <select id="getMobile" resultType="java.lang.String">
+        select mobile from `user` where userAccount = #{username} or mobile = #{username} and isDelete = 0;
+    </select>
 </mapper>
